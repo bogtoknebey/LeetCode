@@ -961,6 +961,56 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 944
+
+        #region Solution
+
+        public int MinDeletionSize(string[] strs)
+        {
+            bool[] colomnsDelete = new bool[strs[0].Length];
+            
+            string prevStr = strs[0];
+            int strLen = prevStr.Length;
+            int res = 0;
+            for (int i = 0; i < strs.Length; i++)
+            {
+                string currStr = strs[i];
+                for (int j = 0; j < strLen; j++)
+                {
+                    if (colomnsDelete[j])
+                        continue;
+                    if (prevStr[j] > currStr[j])
+                    {
+                        colomnsDelete[j] = true;
+                        res += 1;
+                    }
+                        
+                }
+                prevStr = currStr;
+            }
+            return res;
+        }
+
+        #endregion        
+        #region Test
+        public void Test_944()
+        {
+            //string[] input_1 = { "cba", "daf", "ghi" };
+            //Console.WriteLine(MinDeletionSize(input_1));
+
+            //string[] input_2 = { "a", "b" };
+            //Console.WriteLine(MinDeletionSize(input_2));
+
+            //string[] input_3 = { "zyx", "wvu", "tsr" };
+            //Console.WriteLine(MinDeletionSize(input_3));
+
+            string[] input_4 = { "rrjk", "furt", "guzm" };
+            Console.WriteLine(MinDeletionSize(input_4));
+        }
+
+        #endregion
+
+        #endregion
         #region Task 949
 
         #region Solution
@@ -1021,6 +1071,43 @@ namespace LeetCode
 
             OutputMaster.PrintArray(testData2);
             Console.WriteLine(LargestTimeFromDigits(testData2));
+        }
+        #endregion
+
+        #endregion
+        #region Task 1346
+
+        #region Solution
+        public bool CheckIfExist(int[] arr)
+        {
+            int len = arr.Length;
+            List<int> pairArr = new List<int>();
+            int nullCounter = 0;
+            for (int i = 0; i < len; i++)
+            {
+                if (arr[i] == 0)
+                {
+                    nullCounter += 1;
+                    if (nullCounter > 1)
+                        return true;
+                    continue;
+                }
+                if (arr[i] % 2 == 0)
+                    pairArr.Add(arr[i] / 2);
+            }
+            for (int i = 0; i < len; i++)
+            {
+                if (pairArr.IndexOf(arr[i]) != -1)
+                    return true;
+            }
+            return false;
+        }
+        #endregion        
+        #region Test
+        public void Test_1346()
+        {
+            int[] test_1 = { -2, 0, 10, -19, 4, 6, -8 };
+            Console.WriteLine(CheckIfExist(test_1));
         }
         #endregion
 
@@ -1100,5 +1187,7 @@ namespace LeetCode
         #endregion
 
         #endregion
+        
+
     }
 }
