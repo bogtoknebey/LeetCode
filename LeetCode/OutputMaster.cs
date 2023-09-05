@@ -8,6 +8,15 @@ namespace LeetCode
 {
     internal static class OutputMaster
     {
+        internal static void PrintList(IList<string> list)
+        {
+            foreach(var item in list)
+            {
+                Console.Write(item + " ");
+            }
+            Console.WriteLine();
+        }
+
         internal static void PrintArray(int[] a)
         {
             for (int i = 0; i < a.Length; i++)
@@ -17,6 +26,18 @@ namespace LeetCode
             Console.WriteLine();
         }
 
+        internal static void PrintArray(int[][] a)
+        {
+            for (int i = 0; i < a.Length; i++)
+            {
+                int[] arr = a[i];
+                for (int j = 0; j < arr.Length; j++)
+                {
+                    Console.Write(a[i][j] + " ");
+                }
+                Console.WriteLine();
+            }
+        }
 
         internal static void PrintArray(int[,] a)
         {

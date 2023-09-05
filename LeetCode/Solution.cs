@@ -961,6 +961,47 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 916
+
+        #region Solution
+        public bool isSubset(string str, string subStr)
+        {
+            foreach (var c in subStr)
+            {
+                int ind = str.IndexOf(c);
+                if (ind == -1)
+                    return false;
+                str = str.Remove(ind, 1);
+            }
+            return true;
+        }
+        public IList<string> WordSubsets(string[] words1, string[] words2)
+        {
+            List<string> res = new List<string>();
+            foreach (var w1 in words1)
+            {
+                bool isSuit = true;
+                foreach (var w2 in words2)
+                {
+                    isSuit &= isSubset(w1, w2);
+                }
+                if (isSuit)
+                    res.Add(w1);
+            }
+            return res;
+        }
+        #endregion        
+        #region Test
+        public void Test_916()
+        {
+            string[] w1 = { "amazon", "apple", "facebook", "google", "leetcode" };
+            string[] w2 = { "e", "oo" };
+            OutputMaster.PrintList(WordSubsets(w1, w2));
+
+        }
+        #endregion
+
+        #endregion
         #region Task 944
 
         #region Solution
@@ -1187,7 +1228,87 @@ namespace LeetCode
         #endregion
 
         #endregion
-        
+        #region Task 2570
+
+        #region Solution
+        public int[][] MergeArrays(int[][] nums1, int[][] nums2)
+        {
+            Dictionary<int, int> resDict = new Dictionary<int, int>();
+            int maxInd = 1000;
+            int len1 = nums1.Length;
+            int len2 = nums2.Length;
+            int i1 = 0;
+            int i2 = 0;
+            int ind = 1;
+
+            while ((i1 < len1 && i2 < len2) || ind <= maxInd)
+            {
+                bool isValid1 = true;
+                bool isValid2 = true;
+                int ind1 = 0;
+                int val1 = 0;
+                int ind2 = 0;
+                int val2 = 0;
+                try 
+                {
+                    ind1 = nums1[i1][0];
+                    val1 = nums1[i1][1];
+                }
+                catch
+                {
+                    isValid1 = false;
+                }
+                try
+                {
+                    ind2 = nums2[i2][0];
+                    val2 = nums2[i2][1];
+                }
+                catch
+                {
+                    isValid2 = false;
+                }
+
+
+                if (isValid1 && isValid2 && ind == ind1 && ind == ind2)
+                {
+                    resDict.Add(ind, val1 + val2);
+                    i1++;
+                    i2++;
+                }
+                if (isValid1 && ind == ind1 && ind != ind2)
+                {
+                    resDict.Add(ind, val1);
+                    i1++;
+                }
+                if (isValid2 && ind != ind1 && ind == ind2)
+                {
+                    resDict.Add(ind, val2);
+                    i2++;
+                }
+                ind++;
+            }
+
+            int[][] res = new int[resDict.Count][];
+            int resInd = 0;
+            foreach (var p in resDict)
+            {
+                int[] currPair = { p.Key, p.Value };
+                res[resInd] = currPair;
+                resInd++;
+            }
+            return res;
+        }
+        #endregion        
+        #region Test
+        public void Test_2570()
+        {
+            int[][] nums1 = { new int[]{ 1, 2 }, new int[] { 2, 3 }, new int[] { 4, 5 } };
+            int[][] nums2 = { new int[] { 1, 4 }, new int[] { 3, 2 }, new int[] { 4, 1 } };
+            OutputMaster.PrintArray(MergeArrays(nums1, nums2));
+        }
+        #endregion
+
+        #endregion
 
     }
 }
