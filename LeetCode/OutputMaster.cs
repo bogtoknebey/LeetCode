@@ -17,7 +17,7 @@ namespace LeetCode
             Console.WriteLine();
         }
 
-        internal static void PrintArray(int[] a)
+        internal static void PrintArray<T>(T[] a)
         {
             for (int i = 0; i < a.Length; i++)
             {

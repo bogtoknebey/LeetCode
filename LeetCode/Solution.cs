@@ -961,6 +961,41 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 599
+
+        #region Solution
+        public string[] FindRestaurant(string[] list1, string[] list2)
+        {
+            int minIndSum = (list1.Length - 1) + (list2.Length - 1);
+            List<string> resList = new List<string>();
+            for (int i = 0; i < list1.Length; i++)
+            {
+                string currStr = list1[i];
+                int pairInd = Array.IndexOf(list2, currStr);
+                if (pairInd == -1)
+                    continue;
+                int currIndSum = i + pairInd;
+                if (currIndSum == minIndSum)
+                    resList.Add(currStr);
+                if (currIndSum < minIndSum)
+                {
+                    resList = new List<string> { currStr };
+                    minIndSum = currIndSum;
+                }
+            }
+            return resList.ToArray();
+        }
+        #endregion        
+        #region Test
+        public void Test_599()
+        {
+            string[] list1 = { "Shogun", "Tapioca Express", "Burger King", "KFC" };
+            string[] list2 = { "KFC", "Shogun", "Burger King" };
+            OutputMaster.PrintArray(FindRestaurant(list1, list2));
+        }
+        #endregion
+
+        #endregion
         #region Task 916
 
         #region Solution
@@ -1309,6 +1344,52 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 1507
 
+        #region Solution
+        public string ReformatDate(string date)
+        {
+            Dictionary<string, string> monthSet = new Dictionary<string, string>()
+            {
+                {"Jan", "01"},
+                {"Feb", "02"},
+                {"Mar", "03"},
+                {"Apr", "04"},
+                {"May", "05"},
+                {"Jun", "06"},
+                {"Jul", "07"},
+                {"Aug", "08"},
+                {"Sep", "09"},
+                {"Oct", "10"},
+                {"Nov", "11"},
+                {"Dec", "12"}
+            };
+
+            bool isDoubleDay = false;
+            string day = "" + date[0];
+            if ('0' <= date[1] && date[1] <= '9')
+            {
+                isDoubleDay = true;
+                day += date[1];
+            }
+            else 
+            {
+                day = "0" + day;
+            }
+
+            string month = monthSet[date.Substring(isDoubleDay ? 5 : 4, 3)];
+            string year = date.Substring(isDoubleDay ? 9 : 8);
+
+            return $"{year}-{month}-{day}";
+        }
+        #endregion        
+        #region Test
+        public void Test_1507()
+        {
+            Console.WriteLine(ReformatDate("20th Oct 2052"));
+        }
+        #endregion
+
+        #endregion
     }
 }
