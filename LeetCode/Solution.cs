@@ -961,6 +961,80 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 205
+
+        #region Solution
+        public bool IsIsomorphic(string s, string t)
+        {
+            if (s.Length != t.Length)
+                return false;
+
+            Dictionary<char, char> sToT = new Dictionary<char, char>();
+            Dictionary<char, char> tToS = new Dictionary<char, char>();
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                char sChar = s[i];
+                char tChar = t[i];
+
+                if (sToT.ContainsKey(sChar))
+                {
+                    if (sToT[sChar] != tChar)
+                        return false;
+                }
+                else if (tToS.ContainsKey(tChar))
+                {
+                    if (tToS[tChar] != sChar)
+                        return false;
+                }
+                else
+                {
+                    sToT[sChar] = tChar;
+                    tToS[tChar] = sChar;
+                }
+            }
+            return true;
+        }
+        #endregion        
+        #region Test
+        public void Test_205()
+        {
+            Console.WriteLine(IsIsomorphic("egg", "add"));
+        }
+        #endregion
+
+        #endregion
+        #region Task 287
+
+        #region Solution
+        public int FindDuplicate(int[] nums)
+        {
+            int len = nums.Length;
+            int[] res = new int[len];
+            for (int i = 0; i < len; i++)
+                res[nums[i]]++;
+
+            int maxEl = 0;
+            int maxInd = 0;
+            for (int i = 0; i < len; i++)
+            {
+                if (res[i] > maxEl)
+                {
+                    maxEl = res[i];
+                    maxInd = i;
+                }
+            }
+            return maxInd;
+        }
+        #endregion        
+        #region Test
+        public void Test_287()
+        {
+            Console.WriteLine(FindDuplicate(new int[] { 3, 1, 3, 4, 2 }));
+        }
+        #endregion
+
+        #endregion
         #region Task 599
 
         #region Solution
@@ -1188,6 +1262,79 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 1507
+
+        #region Solution
+        public string ReformatDate(string date)
+        {
+            Dictionary<string, string> monthSet = new Dictionary<string, string>()
+            {
+                {"Jan", "01"},
+                {"Feb", "02"},
+                {"Mar", "03"},
+                {"Apr", "04"},
+                {"May", "05"},
+                {"Jun", "06"},
+                {"Jul", "07"},
+                {"Aug", "08"},
+                {"Sep", "09"},
+                {"Oct", "10"},
+                {"Nov", "11"},
+                {"Dec", "12"}
+            };
+
+            bool isDoubleDay = false;
+            string day = "" + date[0];
+            if ('0' <= date[1] && date[1] <= '9')
+            {
+                isDoubleDay = true;
+                day += date[1];
+            }
+            else
+            {
+                day = "0" + day;
+            }
+
+            string month = monthSet[date.Substring(isDoubleDay ? 5 : 4, 3)];
+            string year = date.Substring(isDoubleDay ? 9 : 8);
+
+            return $"{year}-{month}-{day}";
+        }
+        #endregion        
+        #region Test
+        public void Test_1507()
+        {
+            Console.WriteLine(ReformatDate("20th Oct 2052"));
+        }
+        #endregion
+
+        #endregion
+        #region Task 1844
+
+        #region Solution
+        public string ReplaceDigits(string s)
+        {
+            char Shift(char c, int num)
+            {
+                return Convert.ToChar(Convert.ToInt32(c) + num);
+            }
+            for (int i = 1; i < s.Length; i += 2)
+            {
+                char currChar = Shift(s[i - 1], Convert.ToInt32(s[i]) - 48);
+                //.Remove(3, 2).Insert(3, "ZX");
+                s = s.Substring(0, i) + currChar + s.Substring(i + 1);
+            }
+            return s;
+        }
+        #endregion        
+        #region Test
+        public void Test_1844()
+        {
+            Console.WriteLine(ReplaceDigits("a1c1e1"));
+        }
+        #endregion
+
+        #endregion
         #region Task 2559
 
         #region Solution
@@ -1344,52 +1491,6 @@ namespace LeetCode
         #endregion
 
         #endregion
-        #region Task 1507
-
-        #region Solution
-        public string ReformatDate(string date)
-        {
-            Dictionary<string, string> monthSet = new Dictionary<string, string>()
-            {
-                {"Jan", "01"},
-                {"Feb", "02"},
-                {"Mar", "03"},
-                {"Apr", "04"},
-                {"May", "05"},
-                {"Jun", "06"},
-                {"Jul", "07"},
-                {"Aug", "08"},
-                {"Sep", "09"},
-                {"Oct", "10"},
-                {"Nov", "11"},
-                {"Dec", "12"}
-            };
-
-            bool isDoubleDay = false;
-            string day = "" + date[0];
-            if ('0' <= date[1] && date[1] <= '9')
-            {
-                isDoubleDay = true;
-                day += date[1];
-            }
-            else 
-            {
-                day = "0" + day;
-            }
-
-            string month = monthSet[date.Substring(isDoubleDay ? 5 : 4, 3)];
-            string year = date.Substring(isDoubleDay ? 9 : 8);
-
-            return $"{year}-{month}-{day}";
-        }
-        #endregion        
-        #region Test
-        public void Test_1507()
-        {
-            Console.WriteLine(ReformatDate("20th Oct 2052"));
-        }
-        #endregion
-
-        #endregion
+        
     }
 }
