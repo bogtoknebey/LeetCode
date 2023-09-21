@@ -10,6 +10,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using static LeetCode.TreesMaster;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace LeetCode
@@ -961,6 +962,47 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 67
+
+        #region Solution
+        public string AddBinary(string a, string b)
+        {
+            while (a.Length > b.Length)
+                b = "0" + b;
+            while (b.Length > a.Length)
+                a = "0" + a;
+            int len = a.Length;
+
+            string res = "";
+            bool shift = false;
+            for (int i = len - 1; i >= 0; i--)
+            {
+                int currVal = ((int)a[i] - 48) + ((int)b[i] - 48);
+                if (shift)
+                {
+                    currVal += 1;
+                    shift = false;
+                }
+                if (currVal == 0) { res = "0" + res; }
+                if (currVal == 1) { res = "1" + res; }
+                if (currVal == 2) { res = "0" + res; shift = true; }
+                if (currVal == 3) { res = "1" + res; shift = true; }
+            }
+            if (shift)
+                res = "1" + res;
+            //while(res.Length > 1 && res[0] == '0')
+            //res = res.Substring(1);
+            return res;
+        }
+        #endregion        
+        #region Test
+        public void Test_67()
+        {
+            Console.WriteLine(AddBinary("11", "1"));
+        }
+        #endregion
+
+        #endregion
         #region Task 205
 
         #region Solution
@@ -1225,6 +1267,62 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 993
+
+        #region Solution
+        public class Solution993
+        {
+            private int x;
+            private int y;
+            private int xParent;
+            private int yParent;
+            private int xDepth;
+            private int yDepth;
+
+            public bool Rec(TreeNode root, int depth, int parentRootValue)
+            {
+                if (root == null) return true;
+
+                if (root.val == x)
+                {
+                    xDepth = depth;
+                    xParent = parentRootValue;
+                }
+                if (root.val == y)
+                {
+                    yDepth = depth;
+                    yParent = parentRootValue;
+                }
+
+
+                return Rec(root.left, depth + 1, root.val) && Rec(root.right, depth + 1, root.val);
+            }
+            public bool IsCousins(TreeNode root, int x, int y)
+            {
+                this.x = x;
+                this.y = y;
+                this.xDepth = -1;
+                this.yDepth = -1;
+
+                Rec(root, 0, -1);
+                return xDepth == yDepth && xParent != yParent && xDepth != -1;
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_993()
+        {
+            Solution993 solution = new Solution993();
+
+            int?[] arr1 = { 1, 2, 3, null, 4 };
+            TreeNode root1 = GetTreeByArray(arr1);
+            int x1 = 2;
+            int y1 = 3;
+            Console.WriteLine(solution.IsCousins(root1, x1, y1));
+        }
+        #endregion
+
+        #endregion
         #region Task 1346
 
         #region Solution
@@ -1331,6 +1429,71 @@ namespace LeetCode
         public void Test_1844()
         {
             Console.WriteLine(ReplaceDigits("a1c1e1"));
+        }
+        #endregion
+
+        #endregion
+        #region Task 2062
+
+        #region Solution
+        public int CountVowelSubstrings(string word)
+        {
+            static bool isVowel(ref Dictionary<char, bool> vowels)
+            {
+                bool res = true;
+                foreach (var p in vowels)
+                {
+                    res &= p.Value;
+                    vowels[p.Key] = false;
+                }
+                return res;
+            }
+            static string removeNoVowel(string s, string vowels)
+            {
+                string res = "";
+                foreach (var c in s)
+                    if (vowels.IndexOf(c) != -1)
+                        res += c;
+                return res;
+            }
+
+            int res = 0;
+            string vowelsStr = "aeiou";
+            //word = removeNoVowel(word, vowelsStr);
+            int totalLen = word.Length;
+            Dictionary<char, bool> vowels = new Dictionary<char, bool>();
+            foreach (char c in vowelsStr)
+                vowels.Add(c, false);
+            for (int currLen = 5; currLen <= totalLen; currLen++)
+            {
+                for (int startInd = 0; startInd <= (totalLen - currLen); startInd++)
+                {
+                    string currWord = word.Substring(startInd, currLen);
+                    foreach (var c in currWord)
+                        if (vowels.ContainsKey(c))
+                        {
+                            vowels[c] = true;
+                        }
+                        else
+                        {
+                            isVowel(ref vowels);
+                            break;
+                        }
+
+                    if (isVowel(ref vowels))
+                        res += 1;
+                }
+            }
+            return res;
+        }
+        #endregion        
+        #region Test
+        public void Test_2062()
+        {
+            Console.WriteLine(CountVowelSubstrings("aeiouu"));
+            Console.WriteLine(CountVowelSubstrings("unicornarihan"));
+            Console.WriteLine(CountVowelSubstrings("cuaieuouac"));
+            Console.WriteLine(CountVowelSubstrings("bbaeixoubb"));
         }
         #endregion
 
@@ -1491,6 +1654,55 @@ namespace LeetCode
         #endregion
 
         #endregion
-        
+        #region Task 2576
+
+        #region Solution
+        public int MaxNumOfMarkedIndices(int[] nums)
+        {
+            Array.Sort(nums);
+            int maxNum = nums[nums.Length - 1];
+            int dev = 0;
+            int maxDev = maxNum / 2;
+            List<int> numsList = nums.ToList();
+            int res = 0;
+
+            while (numsList.Count > 0 && dev <= maxDev)
+            {
+                bool isAnyChanged = true;
+                while (isAnyChanged) 
+                {
+                    isAnyChanged = false;
+                    for (int i = numsList.Count - 1; i >= 1; i--)
+                    {
+                        i = (numsList.Count - 1) < i ? (numsList.Count - 1) : i;
+                        int currBigNum = numsList[i];
+                        int currSmallNum = currBigNum / 2 - dev;
+
+                        if (numsList.IndexOf(currSmallNum) != -1)
+                        {
+                            res += 2;
+                            numsList.Remove(currBigNum);
+                            numsList.Remove(currSmallNum);
+                            isAnyChanged = true;
+                        }
+                    }
+                }
+
+                dev++;
+            }
+
+            return res;
+        }
+        #endregion        
+        #region Test
+        public void Test_2576()
+        {
+            int[] test = { 9, 2, 5, 4 };
+            int[] test2 = { 1, 78, 27, 48, 14, 86, 79, 68, 77, 20, 57, 21, 18, 67, 5, 51, 70, 85, 47, 56, 22, 79, 41, 8, 39, 81, 59, 74, 14, 45, 49, 15, 10, 28, 16, 77, 22, 65, 8, 36, 79, 94, 44, 80, 72, 8, 96, 78, 39, 92, 69, 55, 9, 44, 26, 76, 40, 77, 16, 69, 40, 64, 12, 48, 66, 7, 59, 10 };
+            Console.WriteLine(MaxNumOfMarkedIndices(test2));
+        }
+        #endregion
+
+        #endregion
     }
 }
