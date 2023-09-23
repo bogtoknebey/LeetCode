@@ -1,3 +1,3 @@
 ﻿using LeetCode;
 Solution solution = new Solution();
-solution.Test_993();
+solution.Test_1437();

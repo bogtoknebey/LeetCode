@@ -1360,6 +1360,48 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 1437
+
+        #region Solution
+        public class Solution1437
+        {
+            public bool KLengthApart(int[] nums, int k)
+            {
+                int l = 0;
+                while (l < nums.Length - 1 && nums[l] == 0) l++;
+
+                int r = nums.Length - 1;
+                while (r > 0 && nums[r] == 0) r--;
+
+                int currDist = 0;
+                for (int i = l + 1; i <= r; i++)
+                {
+                    if (nums[i] == 1)
+                    {
+                        if (currDist < k)
+                            return false;
+                        currDist = 0;
+                    }
+                    else
+                    {
+                        currDist++;
+                    }
+                }
+                return true;
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_1437()
+        {
+            var solution = new Solution1437();
+            int[] nums1 = { 0, 0, 0 };
+            int k1 = 2;
+            Console.WriteLine(solution.KLengthApart(nums1, k1));
+        }
+        #endregion
+
+        #endregion
         #region Task 1507
 
         #region Solution
@@ -1704,5 +1746,6 @@ namespace LeetCode
         #endregion
 
         #endregion
+        
     }
 }
