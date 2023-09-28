@@ -1540,6 +1540,115 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 1232
+
+        #region Solution
+        public class Solution1232
+        {
+            // y1 = a*x1 + b
+            // y2 = a*x2 + b
+            // y1-y2 = a*(x1-x2)
+            // a = (y1 - y2) / (x1 - x2)
+            // b = y1 - a * x1
+
+            // y3, x3 ???
+            public bool CheckStraightLine(int[][] coordinates)
+            {
+                int len = coordinates.Length;
+                double x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+
+                // find two points
+                bool isFind = false;
+                for (int i = 0; i < len - 1; i++)
+                {
+                    for (int j = i + 1; j < len; j++)
+                    {
+                        x1 = coordinates[i][0];
+                        y1 = coordinates[i][1];
+                        x2 = coordinates[j][0];
+                        y2 = coordinates[j][1];
+                        if (x1 != x2 && y1 != y2)
+                        {
+                            isFind = true;
+                            break;
+                        }
+                    }
+                    if (isFind) break;
+                }
+
+                // one coordinate is the same
+                if (!isFind)
+                {
+                    x1 = coordinates[0][0];
+                    y1 = coordinates[0][1];
+                    x2 = coordinates[1][0];
+                    y2 = coordinates[1][1];
+                    if (x1 == x2)
+                    {
+                        int localX = Convert.ToInt32(x1);
+                        for (int i = 0; i < len; i++)
+                            if (coordinates[i][0] != localX)
+                                return false;
+                        return true;
+                    }
+                    if (y1 == y2)
+                    {
+                        int localY = Convert.ToInt32(y1);
+                        for (int i = 0; i < len; i++)
+                            if (coordinates[i][1] != localY)
+                                return false;
+                        return true;
+                    }
+                }
+
+                // common case
+                double a = (y1 - y2) / (x1 - x2);
+                double b = y1 - a * x1;
+
+                double x = 0, y = 0;
+                foreach (var c in coordinates)
+                {
+                    x = c[0];
+                    y = c[1];
+                    if (y != a * x + b)
+                        return false;
+                }
+                return true;
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_1232()
+        {
+            Solution1232 s = new Solution1232();
+            int[][] arr1 = {
+                new int[] { 1, 1 },
+                new int[] { 2, 2 },
+                new int[] { 3, 4 },
+                new int[] { 4, 5 },
+                new int[] { 5, 6 },
+                new int[] { 7, 7 }
+            };
+            int[][] arr2 = {
+                new int[] { 1, 2 },
+                new int[] { 2, 3 },
+                new int[] { 3, 4 },
+                new int[] { 4, 5 },
+                new int[] { 5, 6 },
+                new int[] { 6, 7 }
+            };
+            int[][] arr3 = {
+                new int[] { 0, 0 },
+                new int[] { 0, 1 },
+                new int[] { 0, -1 }
+            };
+            P(s.CheckStraightLine(arr1));
+            P(s.CheckStraightLine(arr2));
+            P(s.CheckStraightLine(arr3));
+        }
+        #endregion
+
+        #endregion
         #region Task 1346
 
         #region Solution
@@ -1717,6 +1826,38 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 1748
+
+        #region Solution
+        public class Solution1748
+        {
+            public int SumOfUnique(int[] nums)
+            {
+                Array.Sort(nums);
+                int currNum = -1;
+                int res = 0;
+                for (int i = 0; i < nums.Length; i++)
+                {
+                    if (nums[i] != currNum)
+                    {
+                        currNum = nums[i];
+                        res += currNum;
+                    }
+                }
+                return res;
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_1748()
+        {
+            Solution1748 solution = new Solution1748();
+            int[] arr1 = new int[] { 1, 2, 3, 2 };
+            Console.WriteLine(solution.SumOfUnique(arr1));
+        }
+        #endregion
+
+        #endregion
         #region Task 1844
 
         #region Solution
@@ -1804,6 +1945,44 @@ namespace LeetCode
             Console.WriteLine(CountVowelSubstrings("unicornarihan"));
             Console.WriteLine(CountVowelSubstrings("cuaieuouac"));
             Console.WriteLine(CountVowelSubstrings("bbaeixoubb"));
+        }
+        #endregion
+
+        #endregion
+        #region Task 2148
+
+        #region Solution
+        public class Solution2148
+        {
+            public int CountElements(int[] nums)
+            {
+                int len = nums.Length;
+                if (len < 3) return 0;
+                Array.Sort(nums);
+                int first = nums[0];
+                int last = nums[len - 1];
+                int res = len - 2;
+                for (int i = 1; i < len; i++)
+                {
+                    if (nums[i] != first)
+                        break;
+                    res--;
+                }
+                for (int i = len - 2; i >= 0; i--)
+                {
+                    if (nums[i] != last)
+                        break;
+                    res--;
+                }
+                return res > 0 ? res : 0;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_2148()
+        {
+            Solution2148 s = new Solution2148();
+            P(s.CountElements(new int[] { -89, 39, 39, -89, 39, 39 }));
         }
         #endregion
 
@@ -2014,38 +2193,6 @@ namespace LeetCode
         #endregion
 
         #endregion
-        #region Task 1748
-
-        #region Solution
-        public class Solution1748
-        {
-            public int SumOfUnique(int[] nums)
-            {
-                Array.Sort(nums);
-                int currNum = -1;
-                int res = 0;
-                for (int i = 0; i < nums.Length; i++)
-                {
-                    if (nums[i] != currNum)
-                    {
-                        currNum = nums[i];
-                        res += currNum;
-                    }
-                }
-                return res;
-            }
-        }
-        #endregion        
-        #region Test
-        public void Test_1748()
-        {
-            Solution1748 solution = new Solution1748();
-            int[] arr1 = new int[] { 1, 2, 3, 2 };
-            Console.WriteLine(solution.SumOfUnique(arr1));
-        }
-        #endregion
-
-        #endregion
-       
+        
     }
 }
