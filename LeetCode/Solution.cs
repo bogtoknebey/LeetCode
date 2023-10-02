@@ -2364,6 +2364,54 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 2231
+
+        #region Solution
+        public class Solution2231
+        {
+            public int LargestInteger(int num)
+            {
+                StringBuilder res = new StringBuilder();
+                List<int> odds = new List<int>();
+                List<int> evens = new List<int>();
+
+                int d = 0;
+                int len = Convert.ToString(num).Length;
+                bool isEven = len % 2 == 0;
+                while (num > 0)
+                {
+                    d = num % 10;
+                    if (isEven) evens.Add(d);
+                    else odds.Add(d);
+                    num /= 10;
+                    isEven = !isEven;
+                }
+
+                odds.Sort();
+                odds.Reverse();
+                evens.Sort();
+                evens.Reverse();
+
+                for (int i = 0; i < len / 2; i++)
+                    res.Append($"{odds[i]}{evens[i]}");
+                if (len % 2 == 1)
+                    res.Append($"{odds[len / 2]}");
+
+                return Convert.ToInt32(res.ToString());
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_2231()
+        {
+            Solution2231 s = new Solution2231();
+            P(s.LargestInteger(247));
+            //P(s.LargestInteger(1234));
+            //P(s.LargestInteger(65875));
+        }
+        #endregion
+
+        #endregion
         #region Task 2559
 
         #region Solution
@@ -2570,53 +2618,6 @@ namespace LeetCode
         #endregion
 
         #endregion
-        #region Task 2231
-
-        #region Solution
-        public class Solution2231
-        {
-            public int LargestInteger(int num)
-            {
-                StringBuilder res = new StringBuilder();
-                List<int> odds = new List<int>();
-                List<int> evens = new List<int>();
-
-                int d = 0;
-                int len = Convert.ToString(num).Length;
-                bool isEven = len % 2 == 0;
-                while (num > 0)
-                {
-                    d = num % 10;
-                    if (isEven) evens.Add(d);
-                    else odds.Add(d);
-                    num /= 10;
-                    isEven = !isEven;
-                }
-
-                odds.Sort();
-                odds.Reverse();
-                evens.Sort();
-                evens.Reverse();
-
-                for (int i = 0; i < len / 2; i++)
-                    res.Append($"{odds[i]}{evens[i]}");
-                if (len % 2 == 1) 
-                    res.Append($"{odds[len / 2]}");
-
-                return Convert.ToInt32(res.ToString());
-            }
-        }
-        #endregion        
-        #region Test
-        public void Test_2231()
-        {
-            Solution2231 s = new Solution2231();
-            P(s.LargestInteger(247));
-            //P(s.LargestInteger(1234));
-            //P(s.LargestInteger(65875));
-        }
-        #endregion
-
-        #endregion
+        
     }
 }
