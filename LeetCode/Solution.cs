@@ -1294,6 +1294,133 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 350
+
+        #region Solution
+        public class Solution350
+        {
+            private Dictionary<int, int> ToDict(int[] arr)
+            {
+                Dictionary<int, int> elms = new Dictionary<int, int>();
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    if (!elms.ContainsKey(arr[i]))
+                        elms.Add(arr[i], 0);
+                    elms[arr[i]]++;
+                }
+                return elms;
+            }
+            public int[] Intersect(int[] nums1, int[] nums2)
+            {
+                Dictionary<int, int> elms1 = ToDict(nums1);
+                Dictionary<int, int> elms2 = ToDict(nums2);
+                List<int> res = new List<int>();
+                foreach (var p in elms1)
+                {
+                    int num = p.Key;
+                    int elCount1 = p.Value;
+                    if (!elms2.ContainsKey(num)) continue;
+                    int elCount2 = elms2[num];
+                    int resCount = elCount1 < elCount2 ? elCount1 : elCount2;
+                    for (int j = 0; j < resCount; j++)
+                        res.Add(num);
+                }
+                return res.ToArray();
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_350()
+        {
+            Solution350 s = new Solution350();
+            OutputMaster.PrintArray(s.Intersect(new int[] { 1, 2, 2, 1 }, new int[] { 2, 2 }));
+        }
+        #endregion
+
+        #endregion
+        #region Task 495
+
+        #region Solution
+        public class Solution495
+        {
+            public int FindPoisonedDuration(int[] timeSeries, int duration)
+            {
+                int res = 0;
+                int poisonEffect = 0;
+                int start = 0;
+                int finish = 0;
+                int repoisonFinish = 0;
+                int durationFinish = 0;
+
+                for (int i = 0; i < timeSeries.Length - 1; i++)
+                {
+                    start = timeSeries[i];
+                    repoisonFinish = timeSeries[i + 1] - 1;
+                    durationFinish = timeSeries[i] + duration - 1;
+
+                    if (repoisonFinish < durationFinish)
+                    {
+                        finish = repoisonFinish;
+                    }
+                    else
+                    {
+                        finish = durationFinish;
+                    }
+                    res += finish - start + 1;
+                }
+                res += duration;
+                return res;
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_495()
+        {
+            Solution495 s = new Solution495();
+            P(s.FindPoisonedDuration(new int[] { 1, 4 }, 2));
+        }
+        #endregion
+
+        #endregion
+        #region Task 507
+
+        #region Solution
+        public class Solution507
+        {
+            public bool CheckPerfectNumber(int num)
+            {
+                List<int> dev = new List<int>();
+                int clone = num;
+                int res = 0;
+                int m = (int)Math.Sqrt((double)num);
+                while (m > 0)
+                {
+                    if (clone % m == 0)
+                        dev.Add(m);
+                    m--;
+                }
+
+                int d2 = 0;
+                foreach (var d1 in dev)
+                {
+                    d2 = num / d1;
+                    res += d1;
+                    if (d2 != d1) res += d2;
+                }
+                return res / 2 == num;
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_507()
+        {
+            Solution507 s = new Solution507();
+            P(s.CheckPerfectNumber(28));
+            P(s.CheckPerfectNumber(7));
+        }
+        #endregion
+
+        #endregion
         #region Task 599
 
         #region Solution
@@ -1649,6 +1776,192 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 1275
+
+        #region Solution
+        public class Solution1275
+        {
+            private const int SIZE = 3;
+            private int[][] field = new int[SIZE][];
+            private GameState State = GameState.Pending;
+
+            public Solution1275() => Reset();
+
+            private void SetGameState()
+            {
+                int rowCount = field.Length;
+                int colomnCount = field[0].Length;
+                int spWinner = 0;
+                // searching for winner in rows
+                for (int i = 0; i < rowCount; i++)
+                {
+                    spWinner = field[i][0];
+                    for (int j = 0; j < colomnCount; j++)
+                    {
+                        if (spWinner != field[i][j])
+                        {
+                            spWinner = -1;
+                            break;
+                        }
+                    }
+                    if (spWinner == 1) { State = GameState.A; return; }
+                    if (spWinner == 2) { State = GameState.B; return; }
+                }
+                // searching for winner in colomns
+                for (int i = 0; i < colomnCount; i++)
+                {
+                    spWinner = field[0][i];
+                    if (spWinner == 0) continue;
+                    for (int j = 0; j < rowCount; j++)
+                    {
+                        if (spWinner != field[j][i])
+                        {
+                            spWinner = -1;
+                            break;
+                        }
+                    }
+                    if (spWinner == 1) { State = GameState.A; return; }
+                    if (spWinner == 2) { State = GameState.B; return; }
+                }
+                // searching for winner in diagonals
+                if (field[0][0] != 0)
+                {
+                    spWinner = field[0][0];
+                    for (int i = 0; i < rowCount; i++)
+                    {
+                        if (spWinner != field[i][i])
+                        {
+                            spWinner = -1;
+                            break;
+                        }
+                    }
+                    if (spWinner == 1) { State = GameState.A; return; }
+                    if (spWinner == 2) { State = GameState.B; return; }
+                }
+                if (field[0][colomnCount - 1] != 0)
+                {
+                    spWinner = field[0][colomnCount - 1];
+                    for (int i = 0; i < colomnCount; i++)
+                    {
+                        if (spWinner != field[i][colomnCount - 1 - i])
+                        {
+                            spWinner = -1;
+                            break;
+                        }
+                    }
+                    if (spWinner == 1) { State = GameState.A; return; }
+                    if (spWinner == 2) { State = GameState.B; return; }
+                }
+
+                // check for draw
+                bool isDraw = true;
+                for (int i = 0; i < rowCount; i++)
+                {
+                    for (int j = 0; j < rowCount; j++)
+                    {
+                        if (field[i][j] == 0)
+                        {
+                            isDraw = false;
+                            break;
+                        }
+                    }
+                }
+                if (isDraw) State = GameState.Draw;
+                else State = GameState.Pending;
+            }
+
+            public void SetMoves(int[][] moves)
+            {
+                int x, y;
+                bool isFirstPlayer = true;
+                int sign = 1;
+                for (int i = 0; i < moves.Length; i++)
+                {
+                    if (isFirstPlayer) sign = 1;
+                    else sign = 2;
+                    isFirstPlayer = !isFirstPlayer;
+
+                    x = moves[i][0];
+                    y = moves[i][1];
+                    field[y][x] = sign;
+                }
+            }
+
+            public string Tictactoe(int[][] moves)
+            {
+                SetMoves(moves);
+                SetGameState();
+                return State switch
+                {
+                    GameState.A => "A",
+                    GameState.B => "B",
+                    GameState.Draw => "Draw",
+                    GameState.Pending => "Pending",
+                    _ => ""
+                };
+            }
+            public void Reset()
+            {
+                field = new int[SIZE][];
+                for (int i = 0; i < SIZE; i++)
+                {
+                    field[i] = new int[SIZE];
+                }
+                State = GameState.Pending;
+            }
+            private enum GameState
+            {
+                A,
+                B,
+                Draw,
+                Pending
+            }
+        }
+
+        #endregion
+        #region Test
+        public void Test_1275()
+        {
+            Solution1275 s = new Solution1275();
+            int[][] arr1 = {
+                new int[] {0, 0},
+                new int[] {2, 0},
+                new int[] {1, 1},
+                new int[] {2, 1},
+                new int[] {2, 2}
+            };
+            int[][] arr2 = {
+                new int[] {0, 0},
+                new int[] {1, 1},
+                new int[] {0, 1},
+                new int[] {0, 2},
+                new int[] {1, 0},
+                new int[] {2, 0}
+            };
+            int[][] arr3 = {
+                new int[] {0, 0},
+                new int[] {1, 1},
+                new int[] {2, 0},
+                new int[] {1, 0},
+                new int[] {1, 2},
+                new int[] {2, 1},
+                new int[] {0, 1},
+                new int[] {0, 2},
+                new int[] {2, 2}
+            };
+
+            P(s.Tictactoe(arr1));
+            s.Reset();
+
+            P(s.Tictactoe(arr2));
+            s.Reset();
+
+            P(s.Tictactoe(arr3));
+            s.Reset();
+        }
+        #endregion
+
+        #endregion
         #region Task 1346
 
         #region Solution
@@ -1854,6 +2167,70 @@ namespace LeetCode
             Solution1748 solution = new Solution1748();
             int[] arr1 = new int[] { 1, 2, 3, 2 };
             Console.WriteLine(solution.SumOfUnique(arr1));
+        }
+        #endregion
+
+        #endregion
+        #region Task 1779
+
+        #region Solution
+        public class Solution1779
+        {
+            public class Point
+            {
+                public int X { get; set; }
+                public int Y { get; set; }
+                public int MinDist { get; set; } = Int32.MaxValue;
+                public int MinDistInd { get; set; } = -1;
+
+                public Point(int x, int y)
+                {
+                    this.X = x;
+                    this.Y = y;
+                }
+
+                public bool HasSameCoordinate(Point p) => this.X == p.X || this.Y == p.Y;
+                public int ManhattanDistance(Point p) => Math.Abs(this.X - p.X) + Math.Abs(this.Y - p.Y);
+
+                public void SetManhattanDistance(Point p, int ind)
+                {
+                    if (!HasSameCoordinate(p)) return;
+                    int res = ManhattanDistance(p);
+                    if (res < MinDist)
+                    {
+                        MinDist = res;
+                        MinDistInd = ind;
+                    }
+                }
+            }
+            public int NearestValidPoint(int x, int y, int[][] points)
+            {
+                Point initPoint = new Point(x, y);
+                Point currPoint = null;
+                for (int i = 0; i < points.Length; i++)
+                {
+                    currPoint = new Point(points[i][0], points[i][1]);
+                    initPoint.SetManhattanDistance(currPoint, i);
+                }
+                return initPoint.MinDistInd;
+            }
+        }
+
+        #endregion        
+        #region Test
+        public void Test_1779()
+        {
+            Solution1779 s = new Solution1779();
+            int x1 = 3;
+            int y1 = 4;
+            int[][] points1 = {
+                new int[] { 1, 2 },
+                new int[] { 3, 1 },
+                new int[] { 2, 4 },
+                new int[] { 2, 3 },
+                new int[] { 4, 4 }
+            };
+            P(s.NearestValidPoint(x1, y1, points1));
         }
         #endregion
 
@@ -2193,6 +2570,53 @@ namespace LeetCode
         #endregion
 
         #endregion
-        
+        #region Task 2231
+
+        #region Solution
+        public class Solution2231
+        {
+            public int LargestInteger(int num)
+            {
+                StringBuilder res = new StringBuilder();
+                List<int> odds = new List<int>();
+                List<int> evens = new List<int>();
+
+                int d = 0;
+                int len = Convert.ToString(num).Length;
+                bool isEven = len % 2 == 0;
+                while (num > 0)
+                {
+                    d = num % 10;
+                    if (isEven) evens.Add(d);
+                    else odds.Add(d);
+                    num /= 10;
+                    isEven = !isEven;
+                }
+
+                odds.Sort();
+                odds.Reverse();
+                evens.Sort();
+                evens.Reverse();
+
+                for (int i = 0; i < len / 2; i++)
+                    res.Append($"{odds[i]}{evens[i]}");
+                if (len % 2 == 1) 
+                    res.Append($"{odds[len / 2]}");
+
+                return Convert.ToInt32(res.ToString());
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_2231()
+        {
+            Solution2231 s = new Solution2231();
+            P(s.LargestInteger(247));
+            //P(s.LargestInteger(1234));
+            //P(s.LargestInteger(65875));
+        }
+        #endregion
+
+        #endregion
     }
 }
