@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Numerics;
 using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography.X509Certificates;
@@ -1040,6 +1041,100 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 77
+
+        #region Solution
+        public class Solution77
+        {
+            private bool[] positions;
+            private IList<IList<int>> combines = new List<IList<int>>();
+
+
+            private void AddCurrent()
+            {
+                IList<int> current = new List<int>();
+                for (int i = 1; i < positions.Length; i++)
+                    if (positions[i])
+                        current.Add(i);
+                combines.Add(current);
+            }
+
+
+            private bool DoStep()
+            {
+                bool emptySpace = false;
+                for (int i = positions.Length - 1; i >= 0; i--)
+                {
+                    if (positions[i])
+                    {
+                        if (emptySpace)
+                        {
+                            // do step
+                            positions[i] = false;
+                            positions[i + 1] = true;
+
+                            // left shift
+                            int countPointer = 0;
+                            for (int j = i + 2; j < positions.Length; j++)
+                                if (positions[j])
+                                    countPointer++;
+                            for (int j = i + 2; j < positions.Length; j++)
+                            {
+                                if (countPointer > 0)
+                                {
+                                    positions[j] = true;
+                                    countPointer--;
+                                }
+                                else
+                                {
+                                    positions[j] = false;
+                                }
+                            }
+
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        emptySpace = true;
+                    }
+                }
+                return false;
+            }
+
+
+            public IList<IList<int>> Combine(int n, int k)
+            {
+                positions = new bool[n + 1];
+                combines = new List<IList<int>>();
+
+                for (int i = 1; i <= k; i++)
+                    positions[i] = true;
+
+                bool able = true;
+                while (able)
+                {
+                    AddCurrent();
+                    able = DoStep();
+                }
+                return combines;
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_77()
+        {
+            Solution77 s = new Solution77();
+            //OutputMaster.PrintListOfList(s.Combine(4, 2));
+            //OutputMaster.PrintListOfList(s.Combine(1, 1));
+            //OutputMaster.PrintListOfList(s.Combine(2, 1));
+            //OutputMaster.PrintListOfList(s.Combine(3, 2));
+            //OutputMaster.PrintListOfList(s.Combine(3, 3));
+            OutputMaster.PrintListOfList(s.Combine(10, 9));
+        }
+        #endregion
+
+        #endregion
         #region Task 190
 
         #region Solution
@@ -1663,6 +1758,56 @@ namespace LeetCode
             int x1 = 2;
             int y1 = 3;
             Console.WriteLine(solution.IsCousins(root1, x1, y1));
+        }
+        #endregion
+
+        #endregion
+        #region Task 1175
+
+        #region Solution
+        public class Solution1175
+        {
+            private bool IsPrime(int n)
+            {
+                if (n == 2) return true;
+                int lim = (int)Math.Sqrt((double)n) + 1;
+                while (lim > 1)
+                {
+                    if (n % lim == 0)
+                        return false;
+                    lim--;
+                }
+                return true;
+            }
+            private int Factorial(int num, int mod = 1000000007)
+            {
+                int res = 1;
+                for (int i = 2; i <= num; i++)
+                {
+                    res = Multiply(res, i);
+                    res %= mod;
+                }
+                return res;
+            }
+            private int Multiply(int n1, int n2, int mod = 1000000007)
+            {
+                return (int)(((long)n1 * (long)n2) % mod);
+            }
+            public int NumPrimeArrangements(int n)
+            {
+                int[] PrimeCount = new int[101];
+                for (int i = 2; i <= 100; i++)
+                    PrimeCount[i] = PrimeCount[i - 1] + (IsPrime(i) ? 1 : 0);
+                int p = PrimeCount[n];
+                return Multiply(Factorial(PrimeCount[n]), Factorial(n - PrimeCount[n]));
+            }
+        }
+        #endregion        
+        #region Test
+        public void Test_1175()
+        {
+            Solution1175 s = new Solution1175();
+            P(s.NumPrimeArrangements(100));
         }
         #endregion
 
