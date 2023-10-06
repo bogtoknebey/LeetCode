@@ -18,20 +18,6 @@ namespace LeetCode
 {
     public class Solution
     {
-        #region Task (Number)
-
-        #region Solution
-
-        #endregion        
-        #region Test
-        public void Test_0()
-        {
-
-        }
-        #endregion
-
-        #endregion
-
         #region Methods
         private void P(double s) => Console.WriteLine(s);
         private void P(string s) => Console.WriteLine(s);
@@ -1215,6 +1201,67 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 211
+
+        #region Solution
+        public class WordDictionary211
+        {
+            private Dictionary<string, bool> words;
+            public WordDictionary211() => words = new Dictionary<string, bool>();
+
+            private bool Equals(string w1, string w2)
+            {
+                int len = w1.Length;
+                if (len != w2.Length) return false;
+                for (int i = 0; i < len; i++)
+                {
+                    if (w1[i] == '.' || w2[i] == '.') continue;
+                    if (w1[i] != w2[i])
+                        return false;
+                }
+                return true;
+            }
+
+            public void AddWord(string word)
+            {
+                if (!words.ContainsKey(word))
+                    words.Add(word, true);
+            }
+
+            public bool Search(string word)
+            {
+                foreach (var w in words)
+                    if (Equals(w.Key, word))
+                        return true;
+                return false;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_211()
+        {
+            WordDictionary211 wordDictionary1 = new WordDictionary211();
+            wordDictionary1.AddWord("bad");
+            wordDictionary1.AddWord("dad");
+            wordDictionary1.AddWord("mad");
+            P(wordDictionary1.Search("pad"));
+            P(wordDictionary1.Search("bad"));
+            P(wordDictionary1.Search(".ad"));
+            P(wordDictionary1.Search("b.."));
+
+            //WordDictionary211 wordDictionary2 = new WordDictionary211();
+            //wordDictionary2.AddWord("a");
+            //wordDictionary2.AddWord("a");
+            //P(wordDictionary2.Search("."));
+            //P(wordDictionary2.Search("a"));
+            //P(wordDictionary2.Search("aa"));
+            //P(wordDictionary2.Search("a"));
+            //P(wordDictionary2.Search(".a"));
+            //P(wordDictionary2.Search("a."));
+        }
+        #endregion
+
+        #endregion
         #region Task 264
 
         #region Solution
@@ -1512,6 +1559,86 @@ namespace LeetCode
             Solution507 s = new Solution507();
             P(s.CheckPerfectNumber(28));
             P(s.CheckPerfectNumber(7));
+        }
+        #endregion
+
+        #endregion
+        #region Task 526
+
+        #region Solution
+        public class Solution526
+        {
+            private int n;
+            private IList<IList<int>> devs = new List<IList<int>>();
+            public int Rec(int step, List<int> avbNums)
+            {
+                if (avbNums.Count == 0) return 1;
+                List<int> nextAvbNums;
+                int res = 0;
+                for (int i = 0; i < avbNums.Count; i++)
+                {
+                    int currNum = avbNums[i];
+                    if (!devs[step].Contains(currNum))
+                        continue;
+                    nextAvbNums = new List<int>(avbNums);
+                    nextAvbNums.Remove(currNum);
+                    res += Rec(step + 1, nextAvbNums);
+                }
+                return res;
+            }
+            public IList<int> DoubleFactorization(int ind, int n)
+            {
+                IList<int> res = new List<int>();
+                int d = 1;
+                while (d <= ind)
+                {
+                    if (ind % d == 0)
+                        res.Add(d);
+                    d++;
+                }
+
+                for (int i = 1; i <= n; i++)
+                    if (i % ind == 0 && !res.Contains(i))
+                        res.Add(i);
+                return res;
+            }
+            public int CountArrangement(int n)
+            {
+                int[] res = new int[] { -1, 1, 2, 3, 8, 10, 36, 41, 132, 250, 700, 750, 4010, 4237, 10680, 24679 };
+                this.n = n;
+                devs = new List<IList<int>>() { new List<int>() };
+
+                // 1 - n inds
+                for (int i = 1; i <= n; i++)
+                    devs.Add(DoubleFactorization(i, n));
+
+                List<int> avbNums = new List<int>();
+                for (int i = 1; i <= n; i++)
+                    avbNums.Add(i);
+
+                // return Rec(1, avbNums);
+                return res[n];
+            }
+
+            public string ResArrayGenerator(int n)
+            {
+                string arrStr = "int[] res = new int[] {";
+                for (int i = 1; i < n; i++)
+                    arrStr += $"{CountArrangement(i)}, ";
+                arrStr += CountArrangement(n);
+                arrStr += "};";
+                return arrStr;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_526()
+        {
+            Solution526 s = new Solution526();
+
+            // P(s.ResArrayGenerator(15));
+            P(s.CountArrangement(2));
+            P(s.CountArrangement(1));
         }
         #endregion
 
@@ -2763,6 +2890,155 @@ namespace LeetCode
         #endregion
 
         #endregion
-        
+        #region Task 2865
+
+        #region Solution
+        public class Solution2865
+        {
+            public long MaximumSumOfHeights(IList<int> maxHeights)
+            {
+                long res = 0;
+                long currRes, lim, heigh;
+                for (int i = 0; i < maxHeights.Count; i++)
+                {
+                    currRes = maxHeights[i];
+
+                    lim = maxHeights[i];
+                    for (int j = i - 1; j >= 0; j--)
+                    {
+                        heigh = maxHeights[j];
+                        if (heigh < lim)
+                            lim = heigh;
+                        else if (heigh > lim)
+                            heigh = lim;
+                        currRes += heigh;
+                    }
+
+                    lim = maxHeights[i];
+                    for (int j = i + 1; j < maxHeights.Count; j++)
+                    {
+                        heigh = maxHeights[j];
+                        if (heigh < lim)
+                            lim = heigh;
+                        else if (heigh > lim)
+                            heigh = lim;
+                        currRes += heigh;
+                    }
+
+                    res = currRes > res ? currRes : res;
+                }
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_2865()
+        {
+            Solution2865 s = new Solution2865();
+            P((double)s.MaximumSumOfHeights(new List<int> { 5, 3, 4, 1, 1 }));
+            P((double)s.MaximumSumOfHeights(new List<int> { 6, 5, 3, 9, 2, 7 }));
+            P((double)s.MaximumSumOfHeights(new List<int> { 3, 2, 5, 5, 2, 3 }));
+        }
+        #endregion
+
+        #endregion
+        #region Task 2343
+
+        #region Solution
+        public class Solution2343
+        {
+            private const int maxLen = 100;
+            private readonly string maxValue;
+            public Solution2343()
+            {
+                StringBuilder s = new StringBuilder();
+                for (int i = 0; i < maxLen; i++)
+                    s.Append("9");
+                maxValue = s.ToString();
+            }
+            public bool IsGreater(string a, string b)
+            {
+                // a > b ?
+                int len = a.Length;
+                if (len != b.Length)
+                    return len > b.Length;
+                for(int i = 0; i < len; i++)
+                {
+                    if (a[i] > b[i])
+                        return true;
+                    else if (a[i] < b[i])
+                        return false;
+                }
+                return false;
+            }
+            public int[] SmallestTrimmedNumbers(string[] nums, int[][] queries)
+            {
+                List<int> res = new List<int>();
+                int trimInd, ind, lowestNumInd = 0;
+                string lowestNum, currNum;
+                bool[] mask = new bool[nums.Length];
+                foreach (var q in queries) 
+                {
+                    ind = q[0];
+                    trimInd = nums[0].Length - q[1];
+                    for (int i = 0; i < mask.Length; i++) mask[i] = true;
+
+                    for (int i = 0; i < ind; i++) 
+                    {
+                        lowestNum = maxValue;
+                        lowestNumInd = -1;
+                        for (int j = 0; j < nums.Length; j++)
+                        {
+                            currNum = nums[j].Substring(trimInd);
+                            if (IsGreater(lowestNum, currNum) && mask[j])
+                            {
+                                lowestNum = currNum;
+                                lowestNumInd = j;
+                            }
+                        }
+                        if(lowestNumInd == -1)
+                            throw new ArgumentException("AAAAAAA");
+                        mask[lowestNumInd] = false;
+                    }
+
+                    res.Add(lowestNumInd);
+                }
+                return res.ToArray();
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_2343()
+        {
+            Solution2343 s = new Solution2343();
+            string[] nums1 = { "102", "473", "251", "814" };
+            int[][] queries1 = 
+            {
+                new int[] {1, 1},
+                new int[] {2, 3},
+                new int[] {4, 2},
+                new int[] {1, 2}
+            };
+            OutputMaster.PrintArray(s.SmallestTrimmedNumbers(nums1, queries1));
+
+
+        }
+        #endregion
+
+        #endregion
+
+        #region Task (Number)
+
+        #region Solution
+
+        #endregion
+        #region Test
+        public void Test_0()
+        {
+
+        }
+        #endregion
+
+        #endregion
     }
 }
