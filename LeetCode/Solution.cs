@@ -2233,6 +2233,58 @@ namespace LeetCode
         }
         #endregion
 
+        #endregion       
+        #region Task 1324
+
+        #region Solution
+        public class Solution1324
+        {
+            public string SpaceRemoving(string s)
+            {
+                while (s[s.Length - 1] == ' ')
+                    s = s.Substring(0, s.Length - 1);
+                return s;
+            }
+            public IList<string> PrintVertically(string s)
+            {
+                IList<string> res = new List<string>();
+                IList<string> words = s.Split(' ');
+
+                int maxLen = 0;
+                foreach (string word in words)
+                    if (word.Length > maxLen)
+                        maxLen = word.Length;
+
+                StringBuilder currWord = new StringBuilder();
+                for (int i = 0; i < maxLen; i++)
+                {
+                    currWord.Clear();
+                    foreach (string word in words)
+                    {
+                        if (word.Length <= i)
+                        {
+                            currWord.Append(' ');
+                            continue;
+                        }
+
+                        currWord.Append(word[i]);
+                    }
+                    res.Add(SpaceRemoving(currWord.ToString()));
+                }
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_1324()
+        {
+            Solution1324 s = new Solution1324();
+            OutputMaster.PrintList(s.PrintVertically("HOW ARE YOU"));
+            OutputMaster.PrintList(s.PrintVertically("TO BE OR NOT TO BE"));
+            OutputMaster.PrintList(s.PrintVertically("CONTEST IS COMING"));
+        }
+        #endregion
+
         #endregion
         #region Task 1346
 
@@ -3026,6 +3078,7 @@ namespace LeetCode
         #endregion
 
         #endregion
+        
 
         #region Task (Number)
 
