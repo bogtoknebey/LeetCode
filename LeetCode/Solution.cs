@@ -3078,7 +3078,66 @@ namespace LeetCode
         #endregion
 
         #endregion
-        
+        #region Task 2410
+
+        #region Solution
+        public class Solution2410
+        {
+            public int MatchPlayersAndTrainers(int[] players, int[] trainers)
+            {
+                Array.Sort(players);
+                Array.Sort(trainers);
+                List<int> p = players.ToList();
+                List<int> t = trainers.ToList();
+
+                int currInd, currPlayer;
+                int res = 0;
+
+                for (int i = 0; i < p.Count; i++) 
+                {
+                    currInd = -1;
+                    currPlayer = p[i];
+                    for (int j = 0; j < t.Count; j++)
+                    {
+                        if (t[j] >= currPlayer)
+                        {
+                            currInd = j;
+                            break;
+                        }
+                    }
+
+                            
+                    if (currInd != -1)
+                    {
+                        t.RemoveAt(currInd);
+                        res++;
+                    }
+                }
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_2410()
+        {
+            Solution2410 s = new Solution2410();
+            //P(s.MatchPlayersAndTrainers(
+            //    new int[] { 4, 7, 9 }, 
+            //    new int[] { 8, 2, 5, 8 }
+            //));
+            //P(s.MatchPlayersAndTrainers(
+            //    new int[] { 1, 1, 1 }, 
+            //    new int[] { 10 }
+            //));
+            P(s.MatchPlayersAndTrainers(
+                new int[] { 1, 1000000000 }, 
+                new int[] { 1000000000, 1 }
+            ));
+        }
+        #endregion
+
+        #endregion
+
 
         #region Task (Number)
 
