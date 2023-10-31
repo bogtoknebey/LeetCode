@@ -3137,7 +3137,91 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 213
 
+        #region Solution
+        public class Solution213
+        {
+            public int Rob(int[] nums)
+            {
+                if(nums.Length == 1) 
+                    return nums[0];
+
+                int res = 0;
+                if (nums.Length % 2 == 1)
+                {
+                    List<int> currL;
+                    int currRes;
+                    for (int i = 0; i < nums.Length; i++)
+                    {
+                        currL = new List<int>(nums);
+                        currL.RemoveAt(i);
+                        currRes = Rob(currL.ToArray());
+                        res = Math.Max(res, currRes);
+                    }
+                    return res;
+                }
+                
+                int len = nums.Length;
+                bool[] enable = Enumerable.Repeat(true, nums.Length).ToArray();
+                int prevInd, curr, nextInd;
+                for (int i = 0; i < nums.Length; i++)
+                {
+                    if (!enable[i]) continue;
+                    curr = nums[i];
+
+                    if (i == 0) prevInd = len - 1;
+                    else prevInd = i - 1;
+
+                    if (i == len - 1) nextInd = 0;
+                    else nextInd = i + 1;
+
+                    if (curr >= nums[prevInd] + nums[nextInd])
+                    {
+                        res += curr;
+                        enable[i] = false;
+                        enable[prevInd] = false;
+                        enable[nextInd] = false;
+                    }
+                }
+
+                int oddSum = 0, evenSum = 0;
+                bool justStart = false;
+                for (int i = 0; i < len; i++)
+                {
+                    // store enable part
+                    if (!enable[i])
+                    {
+                        res += Math.Max(evenSum, oddSum);
+                        evenSum = 0;
+                        oddSum = 0;
+                        justStart = true;
+                        continue;
+                    }
+
+                    if(i % 2 == 0)
+                        evenSum += nums[i];
+                    else
+                        oddSum += nums[i];
+                }
+                res += Math.Max(evenSum, oddSum);
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_213()
+        {
+            Solution213 s = new Solution213();
+            P(s.Rob(new int[] { 6, 3, 10, 8, 2, 10, 3, 5, 10, 5, 3 }));
+            //P(s.Rob(new int[] { 2, 3, 2 }));
+            //P(s.Rob(new int[] { 1, 2, 3, 1 }));
+            //P(s.Rob(new int[] { 1, 2, 3 }));
+        }
+        #endregion
+
+        #endregion
 
         #region Task (Number)
 
