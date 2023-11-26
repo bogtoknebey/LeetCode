@@ -3222,6 +3222,199 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 1363
+
+        #region Solution
+        public class Solution1363
+        {
+            public string LargestMultipleOfThree(int[] digits)
+            {
+                Array.Sort(digits);
+                Array.Reverse(digits);
+
+                int firstMin1 = 10, secondMin1 = 10;
+                int firstMin2 = 10, secondMin2 = 10;
+                int curr, summ = 0;
+                for (int i = 0; i < digits.Length; i++)
+                {
+                    curr = digits[i];
+                    summ += curr;
+                    if (curr % 3 == 1)
+                    {
+                        if (curr < firstMin1) 
+                        {
+                            if (firstMin1 < 10)
+                                secondMin1 = firstMin1;
+                            firstMin1 = curr;
+                        }
+                        else if (curr < secondMin1)
+                            secondMin1 = curr;
+                    }
+                    if (curr % 3 == 2)
+                    {
+                        if (curr < firstMin2) 
+                        {
+                            if (firstMin2 < 10)
+                                secondMin2 = firstMin2;
+                            firstMin2 = curr;
+                        }
+                            
+                        else if (curr < secondMin2)
+                            secondMin2 = curr;
+                    }
+                }
+
+                if (summ == 0)
+                    return "0";
+
+                List<int> d = new List<int>(digits);
+                string res = "";
+                int rest = summ % 3;
+
+                if (rest == 1)
+                {
+                    if (firstMin1 < 10)
+                    {
+                        d.Remove(firstMin1);
+                    }
+                    else if (firstMin2 < 10 && secondMin2 < 10)
+                    {
+                        d.Remove(firstMin2);
+                        d.Remove(secondMin2);
+                    }
+                    else
+                    {
+                        return "";
+                    }
+                }
+                else if (rest == 2)
+                {
+                    if (firstMin2 < 10)
+                    {
+                        d.Remove(firstMin2);
+                    }
+                    else if (firstMin1 < 10 && secondMin1 < 10)
+                    {
+                        d.Remove(firstMin1);
+                        d.Remove(secondMin1);
+                    }
+                    else
+                    {
+                        return "";
+                    }
+                }
+
+                foreach (var c in d)
+                    res += c;
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_1363()
+        {
+            Solution1363 s = new Solution1363();
+            P(s.LargestMultipleOfThree(new int[] { 5, 2, 3 }));
+        }
+        #endregion
+
+        #endregion
+        #region Task 363
+
+        #region Solution
+        public class Solution363
+        {
+
+            public int MaxSumSubmatrix(int[][] matrix, int k)
+            {
+                int res = Int32.MinValue;
+
+                void SetIfSuited(int currSubtr)
+                {
+                    if (currSubtr <= k && currSubtr > res)
+                        res = currSubtr;
+                }
+
+                int m = matrix.Length;
+                int n = matrix[0].Length;
+
+                // alt1: lt to rt
+                for (int i = 0; i < m; i++) 
+                {
+                    for (int j = 1; j < n; j++) 
+                    {
+                        matrix[i][j] += matrix[i][j - 1];
+                    }
+                }
+
+                // alt2: tp to bt
+                for (int i = 1; i < m; i++)
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        matrix[i][j] += matrix[i - 1][j];
+                    }
+                }
+
+                int currSquare;
+                // all subtracts
+                for (int y1 = 0; y1 < m; y1++)
+                {
+                    for (int x1 = 0; x1 < n; x1++)
+                    {
+                        for (int y2 = y1; y2 < m; y2++)
+                        {
+                            for (int x2 = x1; x2 < n; x2++)
+                            {
+                                currSquare = matrix[y2][x2];
+                                if (x1 > 0) currSquare -= matrix[y2][x1 - 1];
+                                if (y1 > 0) currSquare -= matrix[y1 - 1][x2];
+                                if (x1 > 0 && y1 > 0) currSquare += matrix[y1 - 1][x1 - 1];
+                                SetIfSuited(currSquare);
+                            }
+                        }
+                    }
+                }
+                        
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_363()
+        {
+            Solution363 s = new Solution363();
+            P(s.MaxSumSubmatrix(
+                new int[][]
+                {
+                    new int[] {2, 2, -1}
+                },
+                3
+            ));
+            P(s.MaxSumSubmatrix(
+                new int[][]
+                {
+                    new int[] {1, 0, 1},
+                    new int[] {0, -2, 3}
+                },
+                2
+            ));
+
+            P(s.MaxSumSubmatrix(
+                new int[][]
+                {
+                    new int[] {100, 100, 100},
+                    new int[] {100, 1, 100},
+                    new int[] {100, 100, 100}
+                },
+                1
+            ));
+        }
+        #endregion
+
+        #endregion
+
 
         #region Task (Number)
 
