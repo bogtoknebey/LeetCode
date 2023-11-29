@@ -3414,6 +3414,214 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 1561
+
+        #region Solution
+        public class Solution1561
+        {
+            public int MaxCoins(int[] piles)
+            {
+                Array.Sort(piles);
+                Array.Reverse(piles);
+                int res = 0;
+                int rest = piles.Length / 3;
+                for (int i = 1; rest > 0; i += 2)
+                {
+                    res += piles[i];
+                    rest--;
+                }
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_1561()
+        {
+            Solution1561 s = new Solution1561();
+            P(s.MaxCoins(new int[] { 2, 4, 1, 2, 7, 8 }));
+            P(s.MaxCoins(new int[] { 2, 4, 5 }));
+            P(s.MaxCoins(new int[] { 9, 8, 7, 6, 5, 1, 2, 3, 4 }));
+        }
+        #endregion
+
+        #endregion
+        #region Task 1513
+
+        #region Solution
+        public class Solution1513
+        {
+            const int max = 1000000007;
+            public int NumSub(string s)
+            {
+                static int Sum(int num)
+                {
+                    long res = (long)(1 + num) * num / 2;
+                    return (int)(res % max);
+                }
+
+                int res = 0;
+                List<string> sequence = s.Split('0').ToList();
+                foreach(var el in sequence)
+                    res += Sum(el.Length);
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_1513()
+        {
+            Solution1513 s = new Solution1513();
+            P(s.NumSub("0110111"));
+            P(s.NumSub("101"));
+            P(s.NumSub("111111"));
+        }
+        #endregion
+
+        #endregion
+        #region Task 1481
+
+        #region Solution
+        public class Solution1481
+        {
+            public int FindLeastNumOfUniqueInts(int[] arr, int k)
+            {
+                Dictionary<int, int> nums = new Dictionary<int, int>();
+                
+                foreach (var el in arr)
+                {
+                    if(!nums.ContainsKey(el))
+                        nums.Add(el, 0);
+                    nums[el]++;
+                }
+                int res = nums.Count;
+                var sortedNums = from entry in nums orderby entry.Value ascending select entry;
+                foreach (var el in sortedNums)
+                {
+                    if (k >= el.Value)
+                    {
+                        k -= el.Value;
+                        res--;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_1481()
+        {
+            Solution1481 s = new Solution1481();
+            P(s.FindLeastNumOfUniqueInts(new int[] { 5, 5, 4 }, 1));
+            P(s.FindLeastNumOfUniqueInts(new int[] { 4, 3, 1, 1, 3, 3, 2 }, 3));
+        }
+        #endregion
+
+        #endregion
+        #region Task 2244
+
+        #region Solution
+        public class Solution2244
+        {
+            public int MinimumRounds(int[] tasks)
+            {
+                int res = 0;
+                Dictionary<int, int> tasksDict = new Dictionary<int, int>();
+                foreach(var t in tasks)
+                {
+                    if(!tasksDict.ContainsKey(t))
+                        tasksDict.Add(t, 0);
+                    tasksDict[t]++;
+                }
+
+                int c;
+                foreach(var t in tasksDict)
+                {
+                    c = t.Value;
+                    if (c == 1)
+                        return -1;
+
+                    res += c / 3;
+                    if (c % 3 != 0)
+                        res++;
+                }
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_2244()
+        {
+            Solution2244 s = new Solution2244();
+            P(s.MinimumRounds(new int[] { 2, 2, 3, 3, 2, 4, 4, 4, 4, 4 }));
+            P(s.MinimumRounds(new int[] { 2, 3, 3 }));
+        }
+        #endregion
+
+        #endregion
+        #region Task 1333
+
+        #region Solution
+        public class Solution1333
+        {
+            public IList<int> FilterRestaurants(int[][] restaurants, int veganFriendly, int maxPrice, int maxDistance)
+            {
+                Dictionary<int, int> resDict = new Dictionary<int, int>();
+                IList<int> res = new List<int>() {};
+                for(int i = 0; i < restaurants.Length; i++)
+                {
+                    int[] r = restaurants[i];
+                    // vegan check
+                    if (veganFriendly == 1 && r[2] != 1)
+                        continue;
+
+                    // price check
+                    if (r[3] > maxPrice)
+                        continue;
+
+                    // distance check
+                    if (r[4] > maxDistance)
+                        continue;
+
+                    resDict.Add(r[0], r[1]);
+                }
+
+                var sortedResDict = from entry in resDict orderby entry.Key descending select entry;
+                sortedResDict = from entry in sortedResDict orderby entry.Value descending select entry;
+                foreach (var r in sortedResDict)
+                {
+                    res.Add(r.Key);
+                }
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_1333()
+        {
+            Solution1333 s = new Solution1333();
+
+            int[][] r1 = new int[][]
+            {
+                new int[] { 1, 4, 1, 40, 10 },
+                new int[] { 2, 8, 0, 50, 5 },
+                new int[] { 3, 8, 1, 30, 4},
+                new int[] { 4, 10, 0, 10, 3 },
+                new int[] { 5, 1, 1, 15, 1 }
+            };
+            OutputMaster.PrintList(s.FilterRestaurants(r1, 1, 50, 10));
+            OutputMaster.PrintList(s.FilterRestaurants(r1, 0, 50, 10));
+            OutputMaster.PrintList(s.FilterRestaurants(r1, 0, 30, 3));
+        }
+        #endregion
+
+        #endregion
 
 
         #region Task (Number)

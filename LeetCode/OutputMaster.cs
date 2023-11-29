@@ -8,7 +8,7 @@ namespace LeetCode
 {
     internal static class OutputMaster
     {
-        internal static void PrintList(IList<string> list)
+        internal static void PrintList<T>(IList<T> list)
         {
             foreach(var item in list)
             {
