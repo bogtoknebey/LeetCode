@@ -8,6 +8,63 @@ namespace LeetCode
 {
     internal static class AlgorithmMaster
     {
+        internal static int BinarySearchFirstBigger(List<int> list, int target)
+        {
+            int len = list.Count;
+            int left = 0;
+            int right = len - 1;
+
+            while (left <= right)
+            {
+                int mid = left + (right - left) / 2;
+
+                if (list[mid] < target)
+                {
+                    left = mid + 1;
+                }
+                else
+                {
+                    right = mid - 1;
+                }
+            }
+
+            if (left < len && list[left] == target)
+                left += 1;
+            if (left > len - 1)
+                return -1;
+
+            return left;
+        }
+
+
+        internal static void BinarySearchFirstBigger_Test()
+        {
+            Console.WriteLine("---");
+            Console.WriteLine(BinarySearchFirstBigger(new List<int>() { 1, 2, 4, 5 }, 3));
+            Console.WriteLine("---");
+
+            Console.WriteLine("---");
+            Console.WriteLine(BinarySearchFirstBigger(new List<int>() { 1, 2, 3, 4, 5 }, 3));
+            Console.WriteLine("---");
+
+            Console.WriteLine("---");
+            Console.WriteLine(BinarySearchFirstBigger(new List<int>() { 1, 2, 3, 4, 5 }, 10));
+            Console.WriteLine("---");
+
+            Console.WriteLine("---");
+            Console.WriteLine(BinarySearchFirstBigger(new List<int>() { 1, 2 }, 1));
+            Console.WriteLine("---");
+
+            Console.WriteLine("---");
+            Console.WriteLine(BinarySearchFirstBigger(new List<int>() { 1, 2 }, 3));
+            Console.WriteLine("---");
+
+            Console.WriteLine("---");
+            Console.WriteLine(BinarySearchFirstBigger(new List<int>() { 1 }, 0));
+            Console.WriteLine("---");
+        }
+
+
         internal static List<int> BinarySearchAllIndexes(int[] array, int target)
         {
             List<int> indexes = new List<int>();

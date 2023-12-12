@@ -3622,6 +3622,482 @@ namespace LeetCode
         #endregion
 
         #endregion
+        #region Task 2194
+
+        #region Solution
+        public class Solution2194
+        {
+            public IList<string> CellsInRange(string s)
+            {
+                IList<string> res = new List<string>();
+                byte c1 = (byte)s[0];
+                int r1 = s[1] - 48;
+                byte c2 = (byte)s[3];
+                int r2 = s[4] - 48;
+
+                // Console.WriteLine($"input: c1:{c1}, r1:{r1}, c2:{c2}, r2:{r2}");
+                for (byte i = c1; i <= c2; i++)
+                {
+                    for (int j = r1; j <= r2; j++)
+                    {
+                        res.Add($"{(char)(i)}{j}");
+                    }
+                }
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_2194()
+        {
+            Solution2194 s = new Solution2194();
+            OutputMaster.PrintList(s.CellsInRange("K1:L2"));
+            OutputMaster.PrintList(s.CellsInRange("A1:F1"));
+        }
+        #endregion
+
+        #endregion
+        #region Task 2149
+
+        #region Solution
+        public class Solution2149
+        {
+            public int[] RearrangeArray(int[] nums)
+            {
+                List<int> positive = new List<int>();
+                List<int> negative = new List<int>();
+
+                foreach (int i in nums)
+                {
+                    if (i > 0)
+                        positive.Add(i);
+                    if (i < 0)
+                        negative.Add(i);
+                }
+                
+                for (int i = 0, j = 0, k = 0; i < nums.Length; i++)
+                {
+                    if (i % 2 == 0)
+                    {
+                        nums[i] = positive[j];
+                        j++;
+                    }
+                    else 
+                    {
+                        nums[i] = negative[k];
+                        k++;
+                    }
+                }
+                    
+                return nums;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_2149()
+        {
+            Solution2149 s = new Solution2149();
+            OutputMaster.PrintArray(s.RearrangeArray(new int[] { 3, 1, -2, -5, 2, -4 }));
+            OutputMaster.PrintArray(s.RearrangeArray(new int[] { -1, 1 }));
+        }
+        #endregion
+
+        #endregion
+        #region Task 907
+
+        #region Solution
+        public class Solution907
+        {
+            public int AnswerModule = 1000000007;
+            public int SumSubarrayMins(int[] arr)
+            {
+                long res = 0;
+                int len = arr.Length;
+
+                for (int start = 0; start < len; start++)
+                {
+                    int currMin = int.MaxValue;
+                    for (int finish = start; finish < len; finish++)
+                    {
+                        if (arr[finish] < currMin)
+                            currMin = arr[finish];
+                        res += currMin;
+                    }
+                }
+
+                return (int)(res % AnswerModule);
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_907()
+        {
+            Solution907 s = new Solution907();
+            P(s.SumSubarrayMins(new int[] { 3, 1, 2, 4 }));
+            P(s.SumSubarrayMins(new int[] { 11, 81, 94, 43, 3 }));
+        }
+        #endregion
+
+        #endregion
+        #region Task 1408
+
+        #region Solution
+        public class Solution1408
+        {
+            public IList<string> StringMatching(string[] words)
+            {
+                IList<string> res = new List<string>();
+                int currSubs;
+                foreach (var w1 in words)
+                {
+                    currSubs = 0;
+                    foreach (var w2 in words)
+                        if (w2.Contains(w1))
+                            currSubs++;
+                    if (currSubs > 1)
+                        res.Add(w1);
+                }
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_1408()
+        {
+            Solution1408 s = new Solution1408();
+            OutputMaster.PrintList(s.StringMatching(new string[] { "mass", "as", "hero", "superhero" }));
+            OutputMaster.PrintList(s.StringMatching(new string[] { "leetcode", "et", "code" }));
+        }
+        #endregion
+
+        #endregion
+        #region Task 1358
+
+        #region Solution
+        public class Solution1358
+        {
+            private struct Occur
+            {
+                public int a = 0;
+                public int b = 0;
+                public int c = 0;
+                public Occur() { }
+                public bool IsFull() => a > 0 && b > 0 && c > 0;
+                public void AddLetter(char letter)
+                {
+                    if (letter == 'a') a++;
+                    if (letter == 'b') b++;
+                    if (letter == 'c') c++;
+                }
+                public void DeleteLetter(char letter)
+                {
+                    if (letter == 'a' && a > 0) a--;
+                    if (letter == 'b' && b > 0) b--;
+                    if (letter == 'c' && c > 0) c--;
+                }
+            }
+
+
+            public int NumberOfSubstrings(string s)
+            {
+                int res = 0;
+                int len = s.Length;
+                int[] firstOccurIndexByStart = new int[len - 2];
+                Occur occur = new Occur();
+                int currLetter = 0;
+                for (int i = 0; i < firstOccurIndexByStart.Length; i++)
+                {
+                    if (i > 0)
+                    {
+                        occur.DeleteLetter(s[i - 1]);
+                    }
+                        
+                    if (occur.IsFull() && i > 0)
+                    {
+                        firstOccurIndexByStart[i] = firstOccurIndexByStart[i - 1];
+                        continue;
+                    }
+
+                    for (int j = currLetter; j < len; j++)
+                    {
+                        occur.AddLetter(s[j]);
+                        if (occur.IsFull())
+                        {
+                            firstOccurIndexByStart[i] = j;
+                            currLetter = j + 1;
+                            break;
+                        }
+                    }
+                }
+
+                for (int i = 0; i < firstOccurIndexByStart.Length; i++)
+                {
+                    if (firstOccurIndexByStart[i] == 0) 
+                        continue;
+                    res += len - firstOccurIndexByStart[i];
+                }
+                
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_1358()
+        {
+            Solution1358 s = new Solution1358();
+            P(s.NumberOfSubstrings("abcabc"));
+            P(s.NumberOfSubstrings("aaacb"));
+            P(s.NumberOfSubstrings("abc"));
+            P(s.NumberOfSubstrings("ababbbc"));
+        }
+        #endregion
+
+        #endregion
+        #region Task 2615
+
+        #region Solution
+        public class Solution2615
+        {
+            public long[] Distance(int[] nums)
+            {
+                int len = nums.Length;
+                long[] res = new long[len];
+
+                Dictionary<int, List<int>> related = new Dictionary<int, List<int>>();
+                int val;
+                for(int i = 0; i < len; i++)
+                {
+                    val = nums[i];
+                    if (!related.ContainsKey(val))
+                        related.Add(val, new List<int>());
+                    related[val].Add(i);
+                }
+
+                List<int> inds;
+                
+                long sum;
+                int ind;
+                int count;
+                foreach(var relate in related)
+                {
+                    inds = relate.Value;
+                    count = inds.Count;
+
+                    sum = 0;
+                    foreach (var i in inds)
+                        sum += i;
+                    
+
+                    for (int j = 0; j < count; j++)
+                    {
+                        ind = inds[j];
+                        if(j > 0)
+                            sum -= 2 * inds[j - 1];
+                        res[ind] = sum + (long)ind * (long)((2 * j) - count);
+                    }
+                }
+
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_2615()
+        {
+            Solution2615 s = new Solution2615();
+            OutputMaster.PrintArray(s.Distance(new int[] { 1, 3, 1, 1, 2 }));
+            OutputMaster.PrintArray(s.Distance(new int[] { 0, 5, 3 }));
+            
+        }
+        #endregion
+
+        #endregion
+        #region Task 412
+
+        #region Solution
+        public class Solution412
+        {
+            public IList<string> FizzBuzz(int n)
+            {
+                IList<string> res = new List<string>();
+                
+                for(int i = 1; i <= n; i++)
+                {
+                    if(i % 3 == 0 && i % 5 == 0)
+                    {
+                        res.Add("FizzBuzz");
+                    }
+                    else if (i % 3 == 0)
+                    {
+                        res.Add("Fizz");
+                    }
+                    else if (i % 5 == 0)
+                    {
+                        res.Add("Buzz");
+                    }
+                    else
+                    {
+                        res.Add($"{i}");
+                    }
+                }
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_412()
+        {
+            Solution412 s = new Solution412();
+            OutputMaster.PrintList(s.FizzBuzz(3));
+            OutputMaster.PrintList(s.FizzBuzz(5));
+            OutputMaster.PrintList(s.FizzBuzz(15));
+
+        }
+        #endregion
+
+        #endregion
+        #region Task 352
+
+        #region Solution
+        public class SummaryRanges352
+        {
+            private const int MaxValue = 10000;
+            private bool[] Values;
+
+            public SummaryRanges352()
+            {
+                Values = new bool[MaxValue + 1];
+            }
+
+            public void AddNum(int value)
+            {
+                Values[value] = true;
+            }
+
+            public int[][] GetIntervals()
+            {
+                List<int[]> res = new List<int[]>();
+                List<int> currInterval = new List<int>();
+                bool isInterval = false;
+
+                for (int i = 1; i < Values.Length; i++)
+                {
+                    if (!isInterval)
+                    {
+                        if (Values[i])
+                        {
+                            isInterval = true;
+                            currInterval = new List<int>() { i };
+                        }
+                    }
+                    else
+                    {
+                        if (!Values[i])
+                        {
+                            isInterval = false;
+                            currInterval.Add(i - 1);
+                            res.Add(currInterval.ToArray());
+                        }
+                    }
+                }
+
+                return res.ToArray();
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_352()
+        {
+            SummaryRanges352 summaryRanges = new SummaryRanges352();
+            summaryRanges.AddNum(1);
+            Console.WriteLine("---");
+            OutputMaster.PrintArray(summaryRanges.GetIntervals());
+            Console.WriteLine("---");
+            summaryRanges.AddNum(3);
+            Console.WriteLine("---");
+            OutputMaster.PrintArray(summaryRanges.GetIntervals());
+            Console.WriteLine("---");
+            summaryRanges.AddNum(7);
+            Console.WriteLine("---");
+            OutputMaster.PrintArray(summaryRanges.GetIntervals());
+            Console.WriteLine("---");
+            summaryRanges.AddNum(2);
+            Console.WriteLine("---");
+            OutputMaster.PrintArray(summaryRanges.GetIntervals());
+            Console.WriteLine("---");
+            summaryRanges.AddNum(6);
+            Console.WriteLine("---");
+            OutputMaster.PrintArray(summaryRanges.GetIntervals());
+            Console.WriteLine("---");
+
+            Console.WriteLine("-----------------------------");
+
+
+        }
+        #endregion
+
+        #endregion
+        #region Task 1218
+
+        #region Solution
+        public class Solution1218
+        {
+            public int LongestSubsequence(int[] arr, int difference)
+            {
+                int res = 1;
+                Dictionary<int, List<int>> values = new Dictionary<int, List<int>>(); //values to it's idexs
+
+                for(int i = 0; i < arr.Length; i++)
+                {
+                    if (!values.ContainsKey(arr[i]))
+                        values.Add(arr[i], new List<int>());
+                    values[arr[i]].Add(i);
+                }
+
+                int[] results = Enumerable.Repeat(1, arr.Length).ToArray();
+
+                int currElement;
+                int currSubsequence;
+                int currFoundedElement;
+                int nextInd;
+                for (int i = arr.Length - 1; i >= 0; i--)
+                {
+                    currElement = arr[i];
+                    currFoundedElement = currElement + difference;
+
+                    if (!values.ContainsKey(currFoundedElement))
+                        continue;
+
+                    nextInd = AlgorithmMaster.BinarySearchFirstBigger(values[currFoundedElement], i);
+                    if (nextInd == -1) //there no approprivate index
+                        continue;
+                    
+                    currSubsequence = 1 + results[values[currFoundedElement][nextInd]];
+
+                    results[i] = currSubsequence;
+                    res = currSubsequence > res ? currSubsequence : res;
+                }
+
+                return res;
+            }
+        }
+        #endregion
+        #region Test
+        public void Test_1218()
+        {
+            Solution1218 s = new Solution1218();
+            P(s.LongestSubsequence(new int[] { 1, 2, 3, 4 }, 1));
+            P(s.LongestSubsequence(new int[] { 1, 3, 5, 7 }, 1));
+            P(s.LongestSubsequence(new int[] { 1, 5, 7, 8, 5, 3, 4, 2, 1 }, -2));
+        }
+        #endregion
+
+        #endregion
 
 
         #region Task (Number)
