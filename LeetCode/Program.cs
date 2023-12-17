@@ -1,4 +1,4 @@
 ﻿using LeetCode;
 Solution solution = new Solution();
-solution.Test_1218();
+solution.Test_1925();
 
